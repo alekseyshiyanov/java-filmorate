@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import ru.yandex.practicum.filmorate.utils.deserializers.UserDeserializer;
 
@@ -34,23 +35,22 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         User user = (User) o;
 
-        if (!getEmail().equals(user.getEmail())) return false;
-        if (!getLogin().equals(user.getLogin())) return false;
-        if (!getName().equals(user.getName())) return false;
-
-        return getBirthday().equals(user.getBirthday());
+        if (!Objects.equals(email, user.email)) return false;
+        if (!Objects.equals(login, user.login)) return false;
+        if (!Objects.equals(name, user.name)) return false;
+        return Objects.equals(birthday, user.birthday);
     }
 
     @Override
     public int hashCode() {
-        int result = getEmail().hashCode();
-        result = 31 * result + getLogin().hashCode();
-        result = 31 * result + getName().hashCode();
-        result = 31 * result + getBirthday().hashCode();
+        int result = email != null ? email.hashCode() : 0;
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
         return result;
     }
 }

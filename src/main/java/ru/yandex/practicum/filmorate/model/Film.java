@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
@@ -33,24 +34,22 @@ public class Film {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Film)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Film film = (Film) o;
 
-        if (getName() != null ? !getName().equals(film.getName()) : film.getName() != null) return false;
-        if (getDescription() != null ? !getDescription().equals(film.getDescription()) : film.getDescription() != null)
-            return false;
-        if (getReleaseDate() != null ? !getReleaseDate().equals(film.getReleaseDate()) : film.getReleaseDate() != null)
-            return false;
-        return getDuration() != null ? getDuration().equals(film.getDuration()) : film.getDuration() == null;
+        if (!Objects.equals(name, film.name)) return false;
+        if (!Objects.equals(description, film.description)) return false;
+        if (!Objects.equals(releaseDate, film.releaseDate)) return false;
+        return Objects.equals(duration, film.duration);
     }
 
     @Override
     public int hashCode() {
-        int result = getName() != null ? getName().hashCode() : 0;
-        result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
-        result = 31 * result + (getReleaseDate() != null ? getReleaseDate().hashCode() : 0);
-        result = 31 * result + (getDuration() != null ? getDuration().hashCode() : 0);
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (releaseDate != null ? releaseDate.hashCode() : 0);
+        result = 31 * result + (duration != null ? duration.hashCode() : 0);
         return result;
     }
 }
