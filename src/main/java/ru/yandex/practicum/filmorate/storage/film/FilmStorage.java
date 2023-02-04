@@ -10,4 +10,12 @@ public interface FilmStorage {
     Film createFilm(Film film);
 
     Film updateFilm(Film film);
+
+    Film getFilm(Long filmId);
+
+    Film addLike(Long filmId, Long userId);
+
+    Film deleteLike(Long filmId, Long userId);
+
+    List<Film> likedFilmsList(Long count);
 }
