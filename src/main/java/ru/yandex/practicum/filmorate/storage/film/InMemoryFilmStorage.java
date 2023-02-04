@@ -7,9 +7,8 @@ import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -17,6 +16,8 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private Long filmUID = 0L;
     private final HashMap<Long, Film> films = new HashMap<>();
+
+    private final Set<Film> prioritizedFilmList = new TreeSet<>(Comparator.comparingInt(film -> (-1 * film.getLikesList().size())));
 
     private Long getFilmUID() {
         return ++filmUID;
@@ -28,11 +29,15 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
-
     @Override
     public Film createFilm(Film film) {
         addFilm(film);
         return film;
+    }
+
+    @Override
+    public Film getFilm(Long filmId) {
+        return films.get(filmId);
     }
 
     @Override
@@ -66,9 +71,43 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    @Override
+    public Film addLike(Long filmId, Long userId) {
+        Film film = films.get(filmId);
+
+        if (film == null) {
+            return null;
+        }
+
+        film.getLikesList().add(userId);
+        prioritizedFilmList.add(film);
+        return film;
+    }
+
+    @Override
+    public Film deleteLike(Long filmId, Long userId) {
+        Film film = films.get(filmId);
+
+        if (film == null) {
+            return null;
+        }
+
+        film.getLikesList().remove(userId);
+        prioritizedFilmList.add(film);
+        return film;
+    }
+
+    @Override
+    public List<Film> likedFilmsList(Long count) {
+        return prioritizedFilmList.stream()
+                .limit((prioritizedFilmList.size() < count) ? prioritizedFilmList.size() : count)
+                .collect(Collectors.toList());
+    }
+
     private void addFilm(Film film) {
         film.setId(getFilmUID());
         filmAddOrUpdate(film);
+        prioritizedFilmList.add(film);
         log.info("Сохранен объект: {}", film);
     }
 
