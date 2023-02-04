@@ -45,26 +45,14 @@ public class FilmService {
         checkFilmId(filmId);
         checkUserId(userId);
 
-        Film film = filmStorage.addLike(filmId, userId);
-
-        if (film == null) {
-            throw new FilmorateNotFoundException("Запись типа Film с id = " + filmId + " не найдена");
-        }
-
-        return film;
+        return filmStorage.addLike(filmId, userId);
     }
 
     public Film deleteLike(Long filmId, Long userId) {
         checkFilmId(filmId);
         checkUserId(userId);
 
-        Film film = filmStorage.deleteLike(filmId, userId);
-
-        if (film == null) {
-            throw new FilmorateNotFoundException("Запись типа Film с id = " + filmId + " не найдена");
-        }
-
-        return film;
+        return filmStorage.deleteLike(filmId, userId);
     }
 
     public List<Film> likedFilmsList (Long count) {
@@ -85,7 +73,7 @@ public class FilmService {
 
     private void checkUserId(Long userId) {
         if (userId < 0) {
-            throw new FilmorateBadRequestException("Параметр 'userId' не может быть отрицательным");
+            throw new FilmorateNotFoundException("Пользователь с userId = " + userId + " не существует");
         }
     }
 }

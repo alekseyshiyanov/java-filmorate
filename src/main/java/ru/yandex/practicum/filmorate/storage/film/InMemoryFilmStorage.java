@@ -40,6 +40,8 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
+        checkReleaseDate(film);
+
         Long uid = film.getId();
 
         if (uid == null) {
@@ -62,7 +64,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Обновляем объект с ID: {}", uid);
         log.info("Объект до обновления: {}", oldFilm);
 
-        filmAddOrUpdate(film);
+        if (film.getLikesList() == null) {
+            film.setLikesList(new HashSet<>());
+        }
+
+        films.put(uid, film);
 
         log.info("Объект после обновления: {}", films.get(film.getId()));
 
@@ -74,7 +80,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film film = films.get(filmId);
 
         if (film == null) {
-            return null;
+            throw new FilmorateNotFoundException("Ошибка добавления лайка. Фильм с ID = " + filmId + " не существует");
         }
 
         film.getLikesList().add(userId);
@@ -86,7 +92,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film film = films.get(filmId);
 
         if (film == null) {
-            return null;
+            throw new FilmorateNotFoundException("Ошибка удаления лайка. Фильм с ID = " + filmId + " не существует");
+        }
+
+        if (!film.getLikesList().contains(userId)) {
+            throw new FilmorateNotFoundException("Ошибка удаления лайка. Фильм с ID = " + filmId + " не содержит лайка от пользователя с id = " + userId);
         }
 
         film.getLikesList().remove(userId);
@@ -102,13 +112,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     private void addFilm(Film film) {
-        film.setId(getFilmUID());
-
         if (film.getLikesList() == null) {
             film.setLikesList(new HashSet<>());
         }
 
-        filmAddOrUpdate(film);
+        checkReleaseDate(film);
+        film.setId(getFilmUID());
+        films.put(film.getId(), film);
         log.info("Сохранен объект: {}", film);
     }
 
@@ -124,10 +134,5 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.info("Объект: {} не может быть сохранен. Причина 'Дата релиза не может быть ранее 1895-12-28'", film);
             throw new FilmorateBadRequestException("Дата релиза не может быть ранее 1895-12-28");
         }
-    }
-
-    private void filmAddOrUpdate(Film film) {
-        checkReleaseDate(film);
-        films.put(film.getId(), film);
     }
 }

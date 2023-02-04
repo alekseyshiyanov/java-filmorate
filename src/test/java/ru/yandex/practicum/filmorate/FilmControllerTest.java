@@ -255,7 +255,7 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/" + (retFilm23.getId() + 1000L) + "/like/111", HttpMethod.PUT, null, String.class);
 
         assertEquals(404, actualResponseEntity.getStatusCodeValue());
-        assertEquals("[\"Запись типа Film с id = " + (retFilm23.getId() + 1000L) + " не найдена\"]", actualResponseEntity.getBody());
+        assertEquals("[\"Ошибка добавления лайка. Фильм с ID = " + (retFilm23.getId() + 1000L) + " не существует\"]", actualResponseEntity.getBody());
     }
 
     @Test
@@ -336,8 +336,8 @@ class FilmControllerTest {
 
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/" + retFilm29.getId() + "/like/-1", HttpMethod.PUT, null, String.class);
 
-        assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("[\"Параметр 'userId' не может быть отрицательным\"]", actualResponseEntity.getBody());
+        assertEquals(404, actualResponseEntity.getStatusCodeValue());
+        assertEquals("[\"Пользователь с userId = -1 не существует\"]", actualResponseEntity.getBody());
     }
 
     @Test
@@ -378,18 +378,12 @@ class FilmControllerTest {
 
         restTemplate.exchange(url + "/" + retFilm33.getId() + "/like/10", HttpMethod.PUT, null, Film.class);
         restTemplate.exchange(url + "/" + retFilm33.getId() + "/like/20", HttpMethod.PUT, null, Film.class);
+        restTemplate.exchange(url + "/" + retFilm33.getId(), HttpMethod.GET, null, Film.class);
 
-        ResponseEntity<Film> actualResponseEntity_1 = restTemplate.exchange(url + "/" + retFilm33.getId(), HttpMethod.GET, null, Film.class);
+        ResponseEntity<String> actualResponseEntity_2 = restTemplate.exchange(url + "/" + retFilm33.getId() + "/like/100", HttpMethod.DELETE, null, String.class);
 
-        Film retFilm34 = actualResponseEntity_1.getBody();
-
-        restTemplate.exchange(url + "/" + retFilm33.getId() + "/like/100", HttpMethod.DELETE, null, Film.class);
-
-        ResponseEntity<Film> actualResponseEntity_2 = restTemplate.exchange(url + "/" + retFilm33.getId(), HttpMethod.GET, null, Film.class);
-
-        Film retFilm35 = actualResponseEntity_2.getBody();
-
-        assertEquals(retFilm34, retFilm35);
+        assertEquals(404, actualResponseEntity_2.getStatusCodeValue());
+        assertEquals("[\"Ошибка удаления лайка. Фильм с ID = " + retFilm33.getId() + " не содержит лайка от пользователя с id = 100\"]", actualResponseEntity_2.getBody());
     }
 
     @Test
@@ -406,7 +400,7 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity_2 = restTemplate.exchange(url + "/" + (retFilm36.getId() + 1000) + "/like/10", HttpMethod.DELETE, null, String.class);
 
         assertEquals(404, actualResponseEntity_2.getStatusCodeValue());
-        assertEquals("[\"Запись типа Film с id = " + (retFilm36.getId() + 1000) + " не найдена\"]", actualResponseEntity_2.getBody());
+        assertEquals("[\"Ошибка удаления лайка. Фильм с ID = " + (retFilm36.getId() + 1000) + " не существует\"]", actualResponseEntity_2.getBody());
     }
 
     @Test
@@ -583,6 +577,25 @@ class FilmControllerTest {
             Film act = actualResponse.filmsList.get(idx);
             assertEquals(exp, act);
         }
+    }
+
+
+    @Test
+    @DirtiesContext
+    void updateFilmWithNullLikeListBehavior() {
+        Film testFilm_1 = createNewFilm();
+
+        Film retFilm_1 = restTemplate.postForObject(url, testFilm_1, Film.class);
+
+        Film testFilm2 = new Film(retFilm_1.getId(), "test_film_name_7", "test description 7", LocalDate.parse("1947-01-01", DateTimeFormatter.ISO_DATE), 120, null);
+
+        restTemplate.put(url, testFilm2, Film.class);
+
+        ResponseEntity<Film> actualResponse = restTemplate.exchange(url + "/" + testFilm2.getId(), HttpMethod.GET, null, Film.class);
+
+        assertEquals(200, actualResponse.getStatusCodeValue());
+
+        assertNotNull(actualResponse.getBody().getLikesList());
     }
 
     private GetFilmsListResponse getFilmsList (String url) {
