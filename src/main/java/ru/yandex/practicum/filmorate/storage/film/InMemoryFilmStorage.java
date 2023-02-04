@@ -17,8 +17,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     private Long filmUID = 0L;
     private final HashMap<Long, Film> films = new HashMap<>();
 
-    private final Set<Film> prioritizedFilmList = new TreeSet<>(Comparator.comparingInt(film -> (-1 * film.getLikesList().size())));
-
     private Long getFilmUID() {
         return ++filmUID;
     }
@@ -80,7 +78,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
 
         film.getLikesList().add(userId);
-        prioritizedFilmList.add(film);
         return film;
     }
 
@@ -93,21 +90,25 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
 
         film.getLikesList().remove(userId);
-        prioritizedFilmList.add(film);
         return film;
     }
 
     @Override
     public List<Film> likedFilmsList(Long count) {
-        return prioritizedFilmList.stream()
-                .limit((prioritizedFilmList.size() < count) ? prioritizedFilmList.size() : count)
+        return  films.values().stream()
+                .sorted(Comparator.comparingInt(film -> (-1 * film.getLikesList().size())))
+                .limit((films.size() < count) ? films.size() : count)
                 .collect(Collectors.toList());
     }
 
     private void addFilm(Film film) {
         film.setId(getFilmUID());
+
+        if (film.getLikesList() == null) {
+            film.setLikesList(new HashSet<>());
+        }
+
         filmAddOrUpdate(film);
-        prioritizedFilmList.add(film);
         log.info("Сохранен объект: {}", film);
     }
 

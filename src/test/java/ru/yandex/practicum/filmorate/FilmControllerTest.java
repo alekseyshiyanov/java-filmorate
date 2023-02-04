@@ -10,6 +10,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -38,6 +39,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void getFilmsListStandardBehavior() {
         Film testFilm1 = createNewFilm();
         Film testFilm2 = createNewFilm();
@@ -55,6 +57,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void createFilmStandardBehavior() {
         Film testFilm3 = createNewFilm();
         Film testFilm4 = createNewFilm();
@@ -75,6 +78,25 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
+    void createFilmWithNullLikeListBehavior() {
+        Film testFilm3 = new Film(null, "test_film_name_" + testNumber, "test description " + (testNumber++), LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE), 120, null);
+        Film testFilm4 = new Film(null, "test_film_name_" + testNumber, "test description " + (testNumber++), LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE), 120, null);
+
+        restTemplate.postForObject(url, testFilm3, Film.class);
+        restTemplate.postForObject(url, testFilm4, Film.class);
+
+        GetFilmsListResponse actualResponse = getFilmsList(url);
+
+        assertEquals(200, actualResponse.statusCode);
+
+        for (Film film : actualResponse.filmsList) {
+            assertNotNull(film.getLikesList());
+        }
+    }
+
+    @Test
+    @DirtiesContext
     void updateFilmStandardBehavior() {
         Film testFilm5 = createNewFilm();
         Film testFilm6 = createNewFilm();
@@ -97,6 +119,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void updateFilmWithWrongUid() {
         Film testFilm8 = createNewFilm();
         Film testFilm9 = createNewFilm();
@@ -110,10 +133,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
 
         assertEquals(404, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Ошибка обновления объекта. Объект с ID = 100 не существует", actualResponseEntity.getBody());
+        assertEquals("[\"Ошибка обновления объекта. Объект с ID = 100 не существует\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void updateFilmWithNullUid() {
         Film testFilm11 = createNewFilm();
         Film testFilm12 = createNewFilm();
@@ -127,10 +151,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Ошибка обновления объекта. ID не должен быть null", actualResponseEntity.getBody());
+        assertEquals("[\"Ошибка обновления объекта. ID не должен быть null\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void updateFilmWithNegativeUid() {
         Film testFilm14 = createNewFilm();
         Film testFilm15 = createNewFilm();
@@ -144,10 +169,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Ошибка обновления объекта. ID должен быть положительным числом", actualResponseEntity.getBody());
+        assertEquals("[\"Ошибка обновления объекта. ID должен быть положительным числом\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void createFilmWithNullReleaseDate() {
         Film testFilm17 = new Film(null, "test_film_name_17", "test description 17", null, 120, new HashSet<>());
 
@@ -155,10 +181,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Дата релиза не может быть null", actualResponseEntity.getBody());
+        assertEquals("[\"Дата релиза не может быть null\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void createFilmWithToEarlyReleaseDate() {
         Film testFilm18 = new Film(null, "test_film_name_18", "test description 18", LocalDate.parse("1856-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
@@ -166,11 +193,12 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Дата релиза не может быть ранее 1895-12-28", actualResponseEntity.getBody());
+        assertEquals("[\"Дата релиза не может быть ранее 1895-12-28\"]", actualResponseEntity.getBody());
     }
 
     @Test
-    void createFilmWithEmptyName() {
+    @DirtiesContext
+   void createFilmWithEmptyName() {
         Film testFilm19 = new Film(null, "", "test description 19", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm19);
@@ -181,6 +209,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void createFilmWithNullName() {
         Film testFilm20 = new Film(null, null, "test description 20", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
@@ -192,6 +221,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void createFilmWithNegativeDuration() {
         Film testFilm21 = new Film(null, "test_film_name_21", "test description 21", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), -120, new HashSet<>());
 
@@ -203,6 +233,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void addLikeStandardBehavior() {
         Film testFilm22 = createNewFilm();
 
@@ -215,6 +246,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void addLikeWithWrongFilmUidBehavior() {
         Film testFilm23 = createNewFilm();
 
@@ -223,10 +255,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/" + (retFilm23.getId() + 1000L) + "/like/111", HttpMethod.PUT, null, String.class);
 
         assertEquals(404, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Запись типа Film с id = " + (retFilm23.getId() + 1000L) + " не найдена", actualResponseEntity.getBody());
+        assertEquals("[\"Запись типа Film с id = " + (retFilm23.getId() + 1000L) + " не найдена\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void addLikeWithNullFilmUidBehavior() {
         Film testFilm24 = createNewFilm();
 
@@ -237,10 +270,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/" + retFilm24.getId() + "/like/111", HttpMethod.PUT, null, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Параметр 'id' должен быть числом", actualResponseEntity.getBody());
+        assertEquals("[\"Параметр 'id' должен быть числом\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void addLikeWithEmptyFilmUidBehavior() {
         Film testFilm25 = createNewFilm();
 
@@ -249,10 +283,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/"  + "/like/111", HttpMethod.PUT, null, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Пропущен обязательный параметр 'id'", actualResponseEntity.getBody());
+        assertEquals("[\"Пропущен обязательный параметр 'id'\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void addLikeWithNegativeFilmUidBehavior() {
         Film testFilm26 = createNewFilm();
 
@@ -263,10 +298,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/" + retFilm26.getId() + "/like/111", HttpMethod.PUT, null, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Параметр 'id' не может быть отрицательным", actualResponseEntity.getBody());
+        assertEquals("[\"Параметр 'id' не может быть отрицательным\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void addLikeWithNullUserIdBehavior() {
         Film testFilm27 = createNewFilm();
 
@@ -275,10 +311,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/" + retFilm27.getId() + "/like/null", HttpMethod.PUT, null, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Параметр 'userId' должен быть числом", actualResponseEntity.getBody());
+        assertEquals("[\"Параметр 'userId' должен быть числом\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void addLikeWithEmptyUserIdBehavior() {
         Film testFilm28 = createNewFilm();
 
@@ -287,10 +324,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/" + retFilm28.getId() + "/like/", HttpMethod.PUT, null, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Пропущен обязательный параметр 'userId'", actualResponseEntity.getBody());
+        assertEquals("[\"Пропущен обязательный параметр 'userId'\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void addLikeWithNegativeUserIdBehavior() {
         Film testFilm29 = createNewFilm();
 
@@ -299,10 +337,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url + "/" + retFilm29.getId() + "/like/-1", HttpMethod.PUT, null, String.class);
 
         assertEquals(400, actualResponseEntity.getStatusCodeValue());
-        assertEquals("Параметр 'userId' не может быть отрицательным", actualResponseEntity.getBody());
+        assertEquals("[\"Параметр 'userId' не может быть отрицательным\"]", actualResponseEntity.getBody());
     }
 
     @Test
+    @DirtiesContext
     void deleteLikeStandardIdBehavior() {
         Film testFilm30 = createNewFilm();
 
@@ -331,6 +370,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void deleteLikeWithWrongUserIdBehavior() {
         Film testFilm33 = createNewFilm();
 
@@ -353,6 +393,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void deleteLikeWithWrongFilmIdBehavior() {
         Film testFilm36 = createNewFilm();
 
@@ -365,10 +406,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity_2 = restTemplate.exchange(url + "/" + (retFilm36.getId() + 1000) + "/like/10", HttpMethod.DELETE, null, String.class);
 
         assertEquals(404, actualResponseEntity_2.getStatusCodeValue());
-        assertEquals("Запись типа Film с id = " + (retFilm36.getId() + 1000) + " не найдена", actualResponseEntity_2.getBody());
+        assertEquals("[\"Запись типа Film с id = " + (retFilm36.getId() + 1000) + " не найдена\"]", actualResponseEntity_2.getBody());
     }
 
     @Test
+    @DirtiesContext
     void getFilmStandardBehavior() {
         Film testFilm39 = createNewFilm();
 
@@ -380,6 +422,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void getFilmWithNegativeIdBehavior() {
         Film testFilm42 = createNewFilm();
 
@@ -388,10 +431,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity_1 = restTemplate.exchange(url + "/-2", HttpMethod.GET, null, String.class);
 
         assertEquals(400, actualResponseEntity_1.getStatusCodeValue());
-        assertEquals("Параметр 'id' не может быть отрицательным", actualResponseEntity_1.getBody());
+        assertEquals("[\"Параметр 'id' не может быть отрицательным\"]", actualResponseEntity_1.getBody());
     }
 
     @Test
+    @DirtiesContext
     void getFilmWithWrongIdBehavior() {
         Film testFilm44= createNewFilm();
 
@@ -400,10 +444,11 @@ class FilmControllerTest {
         ResponseEntity<String> actualResponseEntity_1 = restTemplate.exchange(url + "/" + (retFilm44.getId() * 1000), HttpMethod.GET, null, String.class);
 
         assertEquals(404, actualResponseEntity_1.getStatusCodeValue());
-        assertEquals("Объект с id = " + (retFilm44.getId() * 1000) + " не найден", actualResponseEntity_1.getBody());
+        assertEquals("[\"Объект с id = " + (retFilm44.getId() * 1000) + " не найден\"]", actualResponseEntity_1.getBody());
     }
 
     @Test
+    @DirtiesContext
     void getLikedFilmsListStandardBehavior() {
         List<Film> filmList = new ArrayList<>();
 
@@ -440,6 +485,7 @@ class FilmControllerTest {
 
         assertEquals(200, actualResponse.statusCode);
         assertEquals(5, actualResponse.filmsList.size());
+
         for (int idx = 0; idx < 5; idx++) {
             Film exp = retFilmsList_1.get(retFilmsList_1.size() - idx - 1);
             Film act = actualResponse.filmsList.get(idx);
@@ -448,6 +494,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void getLikedEmptyQueryBehavior() {
         List<Film> filmList = new ArrayList<>();
 
@@ -493,6 +540,7 @@ class FilmControllerTest {
     }
 
     @Test
+    @DirtiesContext
     void getLikedCheckMaxLengthBehavior() {
         List<Film> filmList = new ArrayList<>();
 
@@ -529,6 +577,12 @@ class FilmControllerTest {
 
         assertEquals(200, actualResponse.statusCode);
         assertEquals(retFilmsList_1.size(), actualResponse.filmsList.size());
+
+        for (int idx = 0; idx < retFilmsList_1.size(); idx++) {
+            Film exp = retFilmsList_1.get(retFilmsList_1.size() - idx - 1);
+            Film act = actualResponse.filmsList.get(idx);
+            assertEquals(exp, act);
+        }
     }
 
     private GetFilmsListResponse getFilmsList (String url) {

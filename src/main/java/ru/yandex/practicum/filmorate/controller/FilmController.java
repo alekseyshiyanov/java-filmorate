@@ -89,24 +89,24 @@ public class FilmController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFoundException(FilmorateNotFoundException e) {
-        return e.getMessage();
+        return "[\"" + e.getMessage() + "\"]";
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleBadRequestException(FilmorateBadRequestException e) {
-        return e.getMessage();
+        return "[\"" + e.getMessage() + "\"]";
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleBadRequestException(MethodArgumentTypeMismatchException e) {
-        return "Параметр '" + e.getName() + "' должен быть числом";
+        return "[\"Параметр '" + e.getName() + "' должен быть числом\"]";
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleBadRequestException(MissingPathVariableException e) {
-        return "Пропущен обязательный параметр '" + e.getVariableName() + "'";
+        return "[\"Пропущен обязательный параметр '" + e.getVariableName() + "'\"]";
     }
 }
