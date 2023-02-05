@@ -6,9 +6,8 @@ import ru.yandex.practicum.filmorate.exceptions.FilmorateBadRequestException;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -53,17 +52,84 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Обновляем объект с ID: {}", uid);
         log.info("Объект до обновления: {}", oldUser);
 
-        userAddOrUpdate(user);
+        checkUserName(user);
+        checkFriendsList(user);
+
+        users.put(user.getId(), user);
 
         log.info("Объект после обновления: {}", users.get(user.getId()));
 
         return user;
     }
 
+    @Override
+    public User getUser(Long userId) {
+        return users.get(userId);
+    }
+
+    @Override
+    public void addFriends(Long userId, Long friendId) {
+        User user_1 = checkUser(userId);
+        User user_2 = checkUser(friendId);
+
+        user_1.getFriends().add(friendId);
+        user_2.getFriends().add(userId);
+    }
+
+    @Override
+    public void deleteFriend(Long userId, Long friendId) {
+        User user_1 = checkUser(userId);
+        User user_2 = checkUser(friendId);
+
+        if (!user_1.getFriends().contains(friendId)) {
+            throw new FilmorateNotFoundException("Пользователь с ID = " + userId + " не связан пользователем с ID = " + friendId);
+        }
+
+        if (!user_2.getFriends().contains(userId)) {
+            throw new FilmorateNotFoundException("Пользователь с ID = " + friendId + " не связан пользователем с ID = " + userId);
+        }
+
+        user_1.getFriends().remove(friendId);
+        user_2.getFriends().remove(userId);
+    }
+
+    @Override
+    public List<User> getFriendsList(Long userId) {
+        User user = checkUser(userId);
+
+        return users.values().stream()
+                             .filter(c -> user.getFriends().contains(c.getId()))
+                             .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> getCommonFriendsList(Long userId, Long otherId) {
+        User user_1 = checkUser(userId);
+        User user_2 = checkUser(otherId);
+
+        return users.values().stream()
+                             .filter(c -> user_1.getFriends().contains(c.getId()))
+                             .filter(c -> user_2.getFriends().contains(c.getId()))
+                             .collect(Collectors.toList());
+    }
+
+    private User checkUser(Long userId) {
+        User user = users.get(userId);
+        if (user == null) {
+            throw new FilmorateNotFoundException("Пользователь с ID = " + userId + " не существует");
+        }
+        return user;
+    }
+
     private void addUser(User user) {
+        checkUserName(user);
+        checkFriendsList(user);
+
         Long uid = getUserUID();
+
         user.setId(uid);
-        userAddOrUpdate(user);
+        users.put(user.getId(), user);
+
         log.info("Сохранен объект: {}", user);
     }
 
@@ -73,9 +139,10 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    private void userAddOrUpdate(User user) {
-        checkUserName(user);
-        users.put(user.getId(), user);
+    private void checkFriendsList(User user) {
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
     }
 
     private Long getUserUID() {
