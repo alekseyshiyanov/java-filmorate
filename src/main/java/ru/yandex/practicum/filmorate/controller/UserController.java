@@ -18,7 +18,7 @@ import java.util.*;
  * PUT /users/{id}/friends/{friendId} — добавление в друзья. +
  * DELETE /users/{id}/friends/{friendId} — удаление из друзей. +
  * GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями. +
- * GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
+ * GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем. +
  */
 @RestController
 @RequestMapping("/users")
@@ -31,27 +31,28 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @GetMapping
     public List<User> getUsersList() {
-        log.info("Получен запрос на  получение списка пользователей");
+        log.info("Запрос на получение списка пользователей");
         return userService.getUsersList();
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id") Long userId) {
-        log.info("Получен запрос на  получение данных пользователя с ID={}", userId);
+        log.info("Запрос на получение данных пользователя с ID={}", userId);
         return userService.getUser(userId);
     }
 
     @GetMapping("/{id}/friends")
     public List<User> getFriendsList(@PathVariable("id") Long userId) {
-        log.info("Получен запрос на  получение списка друзей пользователя с ID={}", userId);
+        log.info("Запрос на получение списка друзей пользователя с ID={}", userId);
         return userService.getFriendsList(userId);
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        log.info("Создание новой записи");
+        log.info("Запрос на создание новой записи");
         return userService.createUser(user);
     }
 
