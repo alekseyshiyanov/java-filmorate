@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -8,13 +7,11 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Objects;
-
-import ru.yandex.practicum.filmorate.utils.deserializers.UserDeserializer;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonDeserialize(using = UserDeserializer.class)
 public class User {
 
     private Long id;
@@ -32,6 +29,8 @@ public class User {
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
 
+    private Set<Long> friends;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,7 +41,8 @@ public class User {
         if (!Objects.equals(email, user.email)) return false;
         if (!Objects.equals(login, user.login)) return false;
         if (!Objects.equals(name, user.name)) return false;
-        return Objects.equals(birthday, user.birthday);
+        if (!Objects.equals(birthday, user.birthday)) return false;
+        return Objects.equals(friends, user.friends);
     }
 
     @Override
@@ -51,6 +51,7 @@ public class User {
         result = 31 * result + (login != null ? login.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
+        result = 31 * result + (friends != null ? friends.hashCode() : 0);
         return result;
     }
 }
