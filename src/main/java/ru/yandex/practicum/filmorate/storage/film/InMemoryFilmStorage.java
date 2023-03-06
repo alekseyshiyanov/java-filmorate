@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.exceptions.FilmorateBadRequestException;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,8 +39,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        checkReleaseDate(film);
-
         Long uid = film.getId();
 
         if (uid == null) {
@@ -76,7 +73,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film addLike(Long filmId, Long userId) {
+    public void addLike(Long filmId, Long userId) {
         Film film = films.get(filmId);
 
         if (film == null) {
@@ -84,11 +81,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
 
         film.getLikesList().add(userId);
-        return film;
     }
 
     @Override
-    public Film deleteLike(Long filmId, Long userId) {
+    public void deleteLike(Long filmId, Long userId) {
         Film film = films.get(filmId);
 
         if (film == null) {
@@ -100,7 +96,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
 
         film.getLikesList().remove(userId);
-        return film;
     }
 
     @Override
@@ -116,23 +111,8 @@ public class InMemoryFilmStorage implements FilmStorage {
             film.setLikesList(new HashSet<>());
         }
 
-        checkReleaseDate(film);
         film.setId(getFilmUID());
         films.put(film.getId(), film);
         log.info("Сохранен объект: {}", film);
-    }
-
-    private void checkReleaseDate(Film film) {
-        LocalDate releaseDate = film.getReleaseDate();
-
-        if (releaseDate == null) {
-            log.info("Объект: {} не может быть сохранен. Причина 'Дата релиза не может быть null'", film);
-            throw new FilmorateBadRequestException("Дата релиза не может быть null");
-        }
-
-        if(releaseDate.isBefore(LocalDate.of(1895, 12, 28))) {
-            log.info("Объект: {} не может быть сохранен. Причина 'Дата релиза не может быть ранее 1895-12-28'", film);
-            throw new FilmorateBadRequestException("Дата релиза не может быть ранее 1895-12-28");
-        }
     }
 }
