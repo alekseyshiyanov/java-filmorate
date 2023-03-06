@@ -105,10 +105,12 @@ public class UserDbStorage implements UserStorage {
     @Override
     public void addFriends(Long userId, Long friendId)
     {
-        String sqlQuery = "INSERT INTO Friends (User_From, User_To) VALUES (?, ?) ON DUPLICATE KEY UPDATE User_From = User_From, User_To = User_To;";
+        String sqlQueryUpdate = "UPDATE Friends SET Status = ? WHERE (User_From = ?) AND (User_To = ?);";
+        String sqlQueryInsert = "INSERT INTO Friends (User_From, User_To, Status) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE User_From = User_From, User_To = User_To;";
 
         try {
-            int result = jdbcTemplate.update(sqlQuery, userId, friendId);
+            int result = jdbcTemplate.update(sqlQueryUpdate, 1, friendId, userId);
+            jdbcTemplate.update(sqlQueryInsert, userId, friendId, result);
         } catch (DataAccessException e) {
             log.info("Ошибка добавления друга friendId = {} для userID = {}. Причина: {}", friendId, userId, e.getCause().getMessage());
             throw new FilmorateSqlException("Ошибка добавления друга");
@@ -118,14 +120,13 @@ public class UserDbStorage implements UserStorage {
     @Override
     public void deleteFriend(Long userId, Long friendId)
     {
-        String sqlQuery =   "DELETE " +
-                            "FROM FRIENDS " +
-                            "WHERE (User_From = ?) AND (User_To = ?);";
+        String sqlQueryUpdate = "UPDATE Friends SET Status = ? WHERE (User_From = ?) AND (User_To = ?);";
+        String sqlQueryDelete = "DELETE FROM FRIENDS WHERE (User_From = ?) AND (User_To = ?);";
+
         try {
-            int result = jdbcTemplate.update(sqlQuery, userId, friendId);
-        } catch (EmptyResultDataAccessException e) {
-            log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getMessage());
-            throw new FilmorateNotFoundException("Пользователь с ID = " + userId + " не найден");
+            jdbcTemplate.update(sqlQueryUpdate, 0, friendId, userId);
+            jdbcTemplate.update(sqlQueryDelete, userId, friendId);
+
         } catch (DataAccessException e) {
             log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getCause().getMessage());
             throw new FilmorateSqlException("Ошибка при чтении данных пользователя");
