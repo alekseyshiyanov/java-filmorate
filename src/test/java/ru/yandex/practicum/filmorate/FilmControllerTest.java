@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.mpa.MPA;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -80,8 +81,32 @@ class FilmControllerTest {
     @Test
     @DirtiesContext
     void createFilmWithNullLikeListBehavior() {
-        Film testFilm1 = new Film(null, "test_film_name_" + testNumber, "test description " + (testNumber++), LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE), 120, null);
-        Film testFilm2 = new Film(null, "test_film_name_" + testNumber, "test description " + (testNumber++), LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE), 120, null);
+        Film testFilm1 = Film.builder()
+                             .id(null)
+                             .name("test_film_name_" + testNumber)
+                             .description("test description " + (testNumber++))
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE))
+                             .duration(120)
+                             .likesCount(0)
+                             .likesList(new HashSet<>())
+                             .build();
+
+        Film testFilm2 = Film.builder()
+                             .id(null)
+                             .name("test_film_name_" + testNumber)
+                             .description("test description " + (testNumber++))
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE))
+                             .duration(120)
+                             .likesCount(0)
+                             .likesList(new HashSet<>())
+                             .build();
+
+//        Film testFilm1 = new Film(null, "test_film_name_" + testNumber, "test description " + (testNumber++), LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE), 120, null);
+//        Film testFilm2 = new Film(null, "test_film_name_" + testNumber, "test description " + (testNumber++), LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE), 120, null);
 
         restTemplate.postForObject(url, testFilm1, Film.class);
         restTemplate.postForObject(url, testFilm2, Film.class);
@@ -104,7 +129,19 @@ class FilmControllerTest {
         Film retFilm1 = restTemplate.postForObject(url, testFilm1, Film.class);
         Film retFilm2 = restTemplate.postForObject(url, testFilm2, Film.class);
 
-        Film testFilm3 = new Film(retFilm1.getId(), "test_film_name_7", "test description 7", LocalDate.parse("1947-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
+        Film testFilm3 = Film.builder()
+                             .id(retFilm1.getId())
+                             .name("test_film_name_7")
+                             .description("test description 7")
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(LocalDate.parse("1947-01-01", DateTimeFormatter.ISO_DATE))
+                             .duration(120)
+                             .likesCount(0)
+                             .likesList(new HashSet<>())
+                             .build();
+
+//        Film testFilm3 = new Film(retFilm1.getId(), "test_film_name_7", "test description 7", LocalDate.parse("1947-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
         restTemplate.put(url, testFilm3, Film.class);
 
@@ -127,7 +164,19 @@ class FilmControllerTest {
         restTemplate.postForObject(url, testFilm1, Film.class);
         restTemplate.postForObject(url, testFilm2, Film.class);
 
-        Film testFilm3 = new Film(100L, "test_film_name_10", "test description 10", LocalDate.parse("1950-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
+        Film testFilm3 = Film.builder()
+                             .id(100L)
+                             .name("test_film_name_10")
+                             .description("test description 19")
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(LocalDate.parse("1950-01-01", DateTimeFormatter.ISO_DATE))
+                             .duration(120)
+                             .likesCount(0)
+                             .likesList(new HashSet<>())
+                             .build();
+
+//        Film testFilm3 = new Film(100L, "test_film_name_10", "test description 10", LocalDate.parse("1950-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm3);
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
@@ -145,7 +194,19 @@ class FilmControllerTest {
         restTemplate.postForObject(url, testFilm1, Film.class);
         restTemplate.postForObject(url, testFilm2, Film.class);
 
-        Film testFilm13 = new Film(null, "test_film_name_13", "test description 13", LocalDate.parse("1953-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
+        Film testFilm13 = Film.builder()
+                              .id(null)
+                              .name("test_film_name_13")
+                              .description("test description 13")
+                              .genres(new ArrayList<>())
+                              .mpa(new MPA())
+                              .releaseDate(LocalDate.parse("1953-01-01", DateTimeFormatter.ISO_DATE))
+                              .duration(120)
+                              .likesCount(0)
+                              .likesList(new HashSet<>())
+                              .build();
+
+//        Film testFilm13 = new Film(null, "test_film_name_13", "test description 13", LocalDate.parse("1953-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm13);
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
@@ -163,7 +224,19 @@ class FilmControllerTest {
         restTemplate.postForObject(url, testFilm1, Film.class);
         restTemplate.postForObject(url, testFilm2, Film.class);
 
-        Film testFilm16 = new Film(-1L, "test_film_name_16", "test description 16", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
+        Film testFilm16 = Film.builder()
+                              .id(-1L)
+                              .name("test_film_name_16")
+                              .description("test description 16")
+                              .genres(new ArrayList<>())
+                              .mpa(new MPA())
+                              .releaseDate(LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE))
+                              .duration(120)
+                              .likesCount(0)
+                              .likesList(new HashSet<>())
+                              .build();
+
+//        Film testFilm16 = new Film(-1L, "test_film_name_16", "test description 16", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm16);
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
@@ -175,7 +248,19 @@ class FilmControllerTest {
     @Test
     @DirtiesContext
     void createFilmWithNullReleaseDate() {
-        Film testFilm1 = new Film(null, "test_film_name_17", "test description 17", null, 120, new HashSet<>());
+        Film testFilm1 = Film.builder()
+                             .id(null)
+                             .name("test_film_name_17")
+                             .description("test description 17")
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(null)
+                             .duration(120)
+                             .likesCount(0)
+                             .likesList(new HashSet<>())
+                             .build();
+
+//        Film testFilm1 = new Film(null, "test_film_name_17", "test description 17", null, 120, new HashSet<>());
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm1);
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -187,7 +272,19 @@ class FilmControllerTest {
     @Test
     @DirtiesContext
     void createFilmWithToEarlyReleaseDate() {
-        Film testFilm1 = new Film(null, "test_film_name_18", "test description 18", LocalDate.parse("1856-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
+        Film testFilm1 = Film.builder()
+                .id(null)
+                .name("test_film_name_18")
+                .description("test description 18")
+                .genres(new ArrayList<>())
+                .mpa(new MPA())
+                .releaseDate(LocalDate.parse("1856-01-01", DateTimeFormatter.ISO_DATE))
+                .duration(120)
+                .likesCount(0)
+                .likesList(new HashSet<>())
+                .build();
+
+//        Film testFilm1 = new Film(null, "test_film_name_18", "test description 18", LocalDate.parse("1856-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm1);
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -199,7 +296,19 @@ class FilmControllerTest {
     @Test
     @DirtiesContext
    void createFilmWithEmptyName() {
-        Film testFilm1 = new Film(null, "", "test description 19", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
+        Film testFilm1 = Film.builder()
+                             .id(null)
+                             .name("")
+                             .description("test description 19")
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE))
+                             .duration(120)
+                             .likesCount(0)
+                             .likesList(new HashSet<>())
+                             .build();
+
+//        Film testFilm1 = new Film(null, "", "test description 19", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm1);
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -211,7 +320,17 @@ class FilmControllerTest {
     @Test
     @DirtiesContext
     void createFilmWithNullName() {
-        Film testFilm1 = new Film(null, null, "test description 20", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
+        Film testFilm1 = Film.builder()
+                             .id(null)
+                             .name(null)
+                             .description("test description 20")
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE))
+                             .duration(120)
+                             .likesCount(0)
+                             .likesList(new HashSet<>())
+                             .build();
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm1);
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -223,7 +342,17 @@ class FilmControllerTest {
     @Test
     @DirtiesContext
     void createFilmWithNegativeDuration() {
-        Film testFilm1 = new Film(null, "test_film_name_21", "test description 21", LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE), -120, new HashSet<>());
+        Film testFilm1 = Film.builder()
+                             .id(null)
+                             .name("test_film_name_21")
+                             .description("test description 21")
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(LocalDate.parse("1956-01-01", DateTimeFormatter.ISO_DATE))
+                             .duration(-120)
+                             .likesCount(0)
+                             .likesList(new HashSet<>())
+                             .build();
 
         HttpEntity<Film> request = new HttpEntity<>(testFilm1);
         ResponseEntity<String> actualResponseEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
@@ -587,7 +716,17 @@ class FilmControllerTest {
 
         Film retFilm_1 = restTemplate.postForObject(url, testFilm1, Film.class);
 
-        Film testFilm2 = new Film(retFilm_1.getId(), "test_film_name_7", "test description 7", LocalDate.parse("1947-01-01", DateTimeFormatter.ISO_DATE), 120, null);
+        Film testFilm2 = Film.builder()
+                             .id(retFilm_1.getId())
+                             .name("test_film_name_7")
+                             .description("test description 7")
+                             .genres(new ArrayList<>())
+                             .mpa(new MPA())
+                             .releaseDate(LocalDate.parse("1947-01-01", DateTimeFormatter.ISO_DATE))
+                             .duration(120)
+                             .likesCount(0)
+                             .likesList(null)
+                             .build();
 
         restTemplate.put(url, testFilm2, Film.class);
 
@@ -619,6 +758,16 @@ class FilmControllerTest {
     }
 
     private Film createNewFilm() {
-        return new Film(null, "test_film_name_" + testNumber, "test description " + (testNumber++), LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE), 120, new HashSet<>());
+        return Film.builder()
+                .id(null)
+                .name("test_film_name_" + testNumber)
+                .description("test description " + (testNumber++))
+                .genres(new ArrayList<>())
+                .mpa(new MPA())
+                .releaseDate(LocalDate.parse("1941-01-01", DateTimeFormatter.ISO_DATE))
+                .duration(120)
+                .likesCount(0)
+                .likesList(new HashSet<>())
+                .build();
     }
 }
