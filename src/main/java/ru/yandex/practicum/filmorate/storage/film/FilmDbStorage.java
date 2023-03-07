@@ -39,7 +39,8 @@ public class FilmDbStorage implements FilmStorage {
                                         + "VALUES (?, ?) ON DUPLICATE KEY UPDATE UserID = UserID, FilmID = FilmID;";
     private final String DELETE_LIKE_QUERY = "DELETE FROM FilmLikes WHERE (UserID = ?) AND (FilmID = ?);";
     private final String SELECT_FILM_BY_ID_QUERY = "SELECT * FROM FILM WHERE ID = ?;";
-    private final String GET_LAST_INSERTED_ID_QUERY = "SELECT LAST_INSERT_ID();";
+//    private final String GET_LAST_INSERTED_ID_QUERY = "SELECT LAST_INSERT_ID();";
+    private final String GET_LAST_INSERTED_ID_QUERY = "SELECT ID FROM FILM ORDER BY ID DESC LIMIT 1;";
 
     @Autowired
     @Qualifier("genreDbStorage")
