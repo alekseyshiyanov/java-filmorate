@@ -63,10 +63,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User updateUser(User user)
     {
-        String sqlUpdateQuery = "UPDATE USER "
-                              + "SET Login = ?, Name = ?, Email = ?, Birthday = ? "
-                              + "WHERE ID = ?;";
-
+        String sqlUpdateQuery = "UPDATE USER SET Login = ?, Name = ?, Email = ?, Birthday = ? WHERE ID = ?;";
         try {
             Long userId = user.getId();
 
@@ -194,10 +191,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     private Set<Long> getFriendsIdList(Long userId) {
-        String query = "SELECT User_To "
-                + "FROM Friends "
-                + "WHERE User_From = ?"
-                + ";";
+        String query = "SELECT User_To FROM Friends WHERE User_From = ?;";
         try {
             return new HashSet<>(jdbcTemplate.query(query, this::friendsIdListFromQuery, userId));
         } catch (DataAccessException e) {
@@ -208,5 +202,4 @@ public class UserDbStorage implements UserStorage {
     private Long friendsIdListFromQuery(ResultSet rs, int rowNum) throws SQLException {
         return rs.getLong("User_To");
     }
-
 }
