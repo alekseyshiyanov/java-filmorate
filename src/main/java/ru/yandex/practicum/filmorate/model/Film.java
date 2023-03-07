@@ -67,22 +67,30 @@ public class Film {
 
         Film film = (Film) o;
 
-        if (!Objects.equals(name, film.name)) return false;
-        if (!Objects.equals(description, film.description)) return false;
-        if (!Objects.equals(releaseDate, film.releaseDate)) return false;
-        if (!Objects.equals(duration, film.duration)) return false;
-        if (!Objects.equals(likesCount, film.likesCount)) return false;
-        return Objects.equals(likesList, film.likesList);
+        if (getName() != null ? !getName().equals(film.getName()) : film.getName() != null) return false;
+        if (getDescription() != null ? !getDescription().equals(film.getDescription()) : film.getDescription() != null)
+            return false;
+        if (getGenres() != null ? !getGenres().equals(film.getGenres()) : film.getGenres() != null) return false;
+        if (getMpa() != null ? !getMpa().equals(film.getMpa()) : film.getMpa() != null) return false;
+        if (getReleaseDate() != null ? !getReleaseDate().equals(film.getReleaseDate()) : film.getReleaseDate() != null)
+            return false;
+        if (getDuration() != null ? !getDuration().equals(film.getDuration()) : film.getDuration() != null)
+            return false;
+        if (getLikesCount() != null ? !getLikesCount().equals(film.getLikesCount()) : film.getLikesCount() != null)
+            return false;
+        return getLikesList() != null ? getLikesList().equals(film.getLikesList()) : film.getLikesList() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (releaseDate != null ? releaseDate.hashCode() : 0);
-        result = 31 * result + (duration != null ? duration.hashCode() : 0);
-        result = 31 * result + (likesCount != null ? likesCount.hashCode() : 0);
-        result = 31 * result + (likesList != null ? likesList.hashCode() : 0);
+        int result = getName() != null ? getName().hashCode() : 0;
+        result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
+        result = 31 * result + (getGenres() != null ? getGenres().hashCode() : 0);
+        result = 31 * result + (getMpa() != null ? getMpa().hashCode() : 0);
+        result = 31 * result + (getReleaseDate() != null ? getReleaseDate().hashCode() : 0);
+        result = 31 * result + (getDuration() != null ? getDuration().hashCode() : 0);
+        result = 31 * result + (getLikesCount() != null ? getLikesCount().hashCode() : 0);
+        result = 31 * result + (getLikesList() != null ? getLikesList().hashCode() : 0);
         return result;
     }
 }
