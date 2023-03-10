@@ -133,10 +133,10 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> getFriendsList(Long userId)
     {
-        String sqlQuery =   "SELECT * " +
-                            "FROM USER AS u " +
-                            "INNER JOIN FRIENDS AS f ON u.UserID = f.User_To " +
-                            "WHERE f.User_From = ?;";
+        String sqlQuery =   "SELECT u.* " +
+                            "FROM USER AS u, FRIENDS f " +
+                            "WHERE (u.UserID = f.User_To) " +
+                            "AND (f.User_From = ?);";
         try {
             return jdbcTemplate.query(sqlQuery, this::getUserDataFromQuery, userId);
         } catch (EmptyResultDataAccessException e) {
