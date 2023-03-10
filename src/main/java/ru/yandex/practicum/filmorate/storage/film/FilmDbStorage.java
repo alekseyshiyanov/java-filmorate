@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.genre.Genre;
 import ru.yandex.practicum.filmorate.model.mpa.MPA;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
 import java.sql.ResultSet;
@@ -35,9 +36,6 @@ public class FilmDbStorage implements FilmStorage {
     private final String DELETE_ALL_FILM_GENRE_QUERY = "DELETE FROM FilmGenres WHERE FilmID = ?;";
     private final String INC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount+1 WHERE FilmID = ?;";
     private final String DEC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount-1 WHERE (FilmID = ?) AND (LikesCount > 0);";
-    private final String ADD_LIKE_QUERY = "INSERT INTO FilmLikes (UserID, FilmID) "
-                                        + "VALUES (?, ?) ON DUPLICATE KEY UPDATE UserID = UserID, FilmID = FilmID;";
-    private final String DELETE_LIKE_QUERY = "DELETE FROM FilmLikes WHERE (UserID = ?) AND (FilmID = ?);";
     private final String SELECT_FILM_BY_ID_QUERY = "SELECT * FROM FILM WHERE FilmID = ?;";
     private final String GET_LAST_INSERTED_ID_QUERY = "SELECT FilmID FROM FILM ORDER BY FilmID DESC LIMIT 1;";
 
@@ -48,6 +46,10 @@ public class FilmDbStorage implements FilmStorage {
     @Autowired
     @Qualifier("mpaDbStorage")
     private MpaStorage mpaStorage;
+
+    @Autowired
+    @Qualifier("likeDbStorage")
+    private LikeStorage likeStorage;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -126,7 +128,7 @@ public class FilmDbStorage implements FilmStorage {
     public void addLike(Long filmId, Long userId)
     {
         try {
-            if (jdbcTemplate.update(ADD_LIKE_QUERY, userId, filmId) > 0)
+            if (likeStorage.addLike(filmId, userId) > 0)
             {
                 jdbcTemplate.update(INC_LIKE_COUNTER_QUERY, filmId);
             }
@@ -140,7 +142,7 @@ public class FilmDbStorage implements FilmStorage {
     public void deleteLike(Long filmId, Long userId)
     {
         try {
-            if (jdbcTemplate.update(DELETE_LIKE_QUERY, userId, filmId) > 0)
+            if (likeStorage.deleteLike(filmId, userId) > 0)
             {
                 jdbcTemplate.update(DEC_LIKE_COUNTER_QUERY, filmId);
             }
