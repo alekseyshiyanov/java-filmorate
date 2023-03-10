@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.friends.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
@@ -15,6 +16,10 @@ public class UserService {
     @Autowired
     @Qualifier("userDbStorage")
     private UserStorage userStorage;
+
+    @Autowired
+    @Qualifier("friendsDbStorage")
+    private FriendsStorage friendsStorage;
 
     public UserService() {}
 
@@ -44,13 +49,16 @@ public class UserService {
         checkUserId(friendId);
         checkUserId(userId);
 
-        userStorage.addFriends(userId, friendId);
+        friendsStorage.addFriends(userId, friendId);
+//        userStorage.addFriends(userId, friendId);
     }
 
     public void deleteFriends(Long userId, Long friendId) {
         checkUserId(friendId);
         checkUserId(userId);
-        userStorage.deleteFriend(userId, friendId);
+
+        friendsStorage.deleteFriend(userId, friendId);
+//        userStorage.deleteFriend(userId, friendId);
     }
 
     public List<User> getFriendsList(Long userId) {
