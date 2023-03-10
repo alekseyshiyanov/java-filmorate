@@ -37,7 +37,7 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Genre getGenre(Long genreId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM GENRE WHERE ID = ?;", new GenreRowMapper(), genreId);
+            return jdbcTemplate.queryForObject("SELECT * FROM GENRE WHERE GenreID = ?;", new GenreRowMapper(), genreId);
         } catch (EmptyResultDataAccessException e) {
             log.info("Ошибка при чтении данных жанров. Причина: {}", e.getMessage());
             throw new FilmorateNotFoundException("Ошибка при обновлении данных жанров");
@@ -49,9 +49,9 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public List<Genre> getGenreListByFilmId(Long filmId) {
-        String query = "SELECT g.ID, g.Name, g.Description "
+        String query = "SELECT g.GenreID, g.Name, g.Description "
                 + "FROM GENRE AS g "
-                + "INNER JOIN FILMGENRES AS fg ON g.ID = fg.GENREID "
+                + "INNER JOIN FILMGENRES AS fg ON g.GenreID = fg.GENREID "
                 + "WHERE fg.FILMID = ?"
                 + ";";
         try {
