@@ -73,32 +73,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addLike(Long filmId, Long userId) {
-        Film film = films.get(filmId);
-
-        if (film == null) {
-            throw new FilmorateNotFoundException("Ошибка добавления лайка. Фильм с ID = " + filmId + " не существует");
-        }
-
-        film.getLikesList().add(userId);
-    }
-
-    @Override
-    public void deleteLike(Long filmId, Long userId) {
-        Film film = films.get(filmId);
-
-        if (film == null) {
-            throw new FilmorateNotFoundException("Ошибка удаления лайка. Фильм с ID = " + filmId + " не существует");
-        }
-
-        if (!film.getLikesList().contains(userId)) {
-            throw new FilmorateNotFoundException("Ошибка удаления лайка. Фильм с ID = " + filmId + " не содержит лайка от пользователя с id = " + userId);
-        }
-
-        film.getLikesList().remove(userId);
-    }
-
-    @Override
     public List<Film> likedFilmsList(Long count) {
         return  films.values().stream()
                 .sorted(Comparator.comparingInt(film -> (-1 * film.getLikesList().size())))
