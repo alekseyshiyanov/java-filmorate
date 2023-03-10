@@ -33,14 +33,13 @@ public class FilmDbStorage implements FilmStorage {
     private final String INSERT_FILM_GENRE_QUERY = "INSERT INTO FilmGenres (FilmID, GenreID) "
             + "VALUES (?, ?) ON DUPLICATE KEY UPDATE FilmID = FilmID, GenreID = GenreID;";
     private final String DELETE_ALL_FILM_GENRE_QUERY = "DELETE FROM FilmGenres WHERE FilmID = ?;";
-    private final String INC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount+1 WHERE ID = ?;";
-    private final String DEC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount-1 WHERE (ID = ?) AND (LikesCount > 0);";
+    private final String INC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount+1 WHERE FilmID = ?;";
+    private final String DEC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount-1 WHERE (FilmID = ?) AND (LikesCount > 0);";
     private final String ADD_LIKE_QUERY = "INSERT INTO FilmLikes (UserID, FilmID) "
                                         + "VALUES (?, ?) ON DUPLICATE KEY UPDATE UserID = UserID, FilmID = FilmID;";
     private final String DELETE_LIKE_QUERY = "DELETE FROM FilmLikes WHERE (UserID = ?) AND (FilmID = ?);";
-    private final String SELECT_FILM_BY_ID_QUERY = "SELECT * FROM FILM WHERE ID = ?;";
-//    private final String GET_LAST_INSERTED_ID_QUERY = "SELECT LAST_INSERT_ID();";
-    private final String GET_LAST_INSERTED_ID_QUERY = "SELECT ID FROM FILM ORDER BY ID DESC LIMIT 1;";
+    private final String SELECT_FILM_BY_ID_QUERY = "SELECT * FROM FILM WHERE FilmID = ?;";
+    private final String GET_LAST_INSERTED_ID_QUERY = "SELECT FilmID FROM FILM ORDER BY FilmID DESC LIMIT 1;";
 
     @Autowired
     @Qualifier("genreDbStorage")
@@ -83,7 +82,7 @@ public class FilmDbStorage implements FilmStorage {
     {
         String sqlUpdateQuery = "UPDATE FILM "
                 + "SET Name = ?, MPA_Rating = ?, Description = ?, ReleaseDate = ?, Duration = ?, LikesCount = ? "
-                + "WHERE ID = ?;";
+                + "WHERE FilmID = ?;";
 
         try {
             Long filmId = film.getId();
@@ -154,18 +153,9 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> likedFilmsList(Long count)
     {
-//        String sqlQuery =   "SELECT * "
-//                          + "FROM FILM f "
-//                          + "WHERE id IN ( "
-//                          + "               SELECT f2.FILMID "
-//                          + "               FROM FILMLIKES f2 "
-//                          + "               GROUP BY f2.FILMID "
-//                          + "               ORDER BY count(f2.FILMID) DESC "
-//                          + "               LIMIT ?"
-//                          + "             );";
         String sqlQuery =   "SELECT * "
                           + "FROM FILM "
-                          + "GROUP BY ID "
+                          + "GROUP BY FilmID "
                           + "ORDER BY LIKESCOUNT DESC "
                           + "LIMIT ?;";
         try {
@@ -179,7 +169,7 @@ public class FilmDbStorage implements FilmStorage {
     private Film getFilmDataFromQuery(ResultSet rs, int rowNum) throws SQLException {
         MPA mpa = mpaStorage.getMpa(rs.getLong("MPA_Rating"));
 
-        Long filmId = rs.getLong("ID");
+        Long filmId = rs.getLong("FilmID");
         List<Genre> genre = genreStorage.getGenreListByFilmId(filmId);
         Set<Long> likesList = getLikesListByFilmId(filmId);
 
