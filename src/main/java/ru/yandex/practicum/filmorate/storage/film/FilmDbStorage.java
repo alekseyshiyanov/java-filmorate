@@ -34,8 +34,6 @@ public class FilmDbStorage implements FilmStorage {
     private final String INSERT_FILM_GENRE_QUERY = "INSERT INTO FilmGenres (FilmID, GenreID) "
             + "VALUES (?, ?) ON DUPLICATE KEY UPDATE FilmID = FilmID, GenreID = GenreID;";
     private final String DELETE_ALL_FILM_GENRE_QUERY = "DELETE FROM FilmGenres WHERE FilmID = ?;";
-    private final String INC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount+1 WHERE FilmID = ?;";
-    private final String DEC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount-1 WHERE (FilmID = ?) AND (LikesCount > 0);";
     private final String SELECT_FILM_BY_ID_QUERY = "SELECT * FROM FILM WHERE FilmID = ?;";
     private final String GET_LAST_INSERTED_ID_QUERY = "SELECT FilmID FROM FILM ORDER BY FilmID DESC LIMIT 1;";
 
@@ -46,10 +44,6 @@ public class FilmDbStorage implements FilmStorage {
     @Autowired
     @Qualifier("mpaDbStorage")
     private MpaStorage mpaStorage;
-
-    @Autowired
-    @Qualifier("likeDbStorage")
-    private LikeStorage likeStorage;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -121,34 +115,6 @@ public class FilmDbStorage implements FilmStorage {
         } catch (DataAccessException e) {
             log.info("Ошибка при чтении данных фильма. Причина: {}", e.getCause().getMessage());
             throw new FilmorateSqlException(String.format("Ошибка при чтении данных фильма с ID = %d", filmId));
-        }
-    }
-
-    @Override
-    public void addLike(Long filmId, Long userId)
-    {
-        try {
-            if (likeStorage.addLike(filmId, userId) > 0)
-            {
-                jdbcTemplate.update(INC_LIKE_COUNTER_QUERY, filmId);
-            }
-        } catch (DataAccessException e) {
-            log.info("Ошибка добавления лайка от userID = {} для filmID = {}. Причина: {}", userId, filmId, e.getCause().getMessage());
-            throw new FilmorateSqlException(String.format("Ошибка добавления лайка от userID = %d для filmID = %d", userId, filmId));
-        }
-    }
-
-    @Override
-    public void deleteLike(Long filmId, Long userId)
-    {
-        try {
-            if (likeStorage.deleteLike(filmId, userId) > 0)
-            {
-                jdbcTemplate.update(DEC_LIKE_COUNTER_QUERY, filmId);
-            }
-        } catch (DataAccessException e) {
-            log.info("Ошибка удаления лайка от userID = {} для filmID = {}. Причина: {}", userId, filmId, e.getCause().getMessage());
-            throw new FilmorateSqlException(String.format("Ошибка удаления лайка от userID = %d для filmID = %d", userId, filmId));
         }
     }
 
