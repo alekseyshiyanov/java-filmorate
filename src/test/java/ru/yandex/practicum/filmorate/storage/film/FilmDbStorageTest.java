@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.mpa.MPA;
-import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeDbStorage;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql({"/test_schema.sql", "/test_data.sql"})
 class FilmDbStorageTest {
     private final FilmDbStorage filmStorage;
-    private final LikeStorage likeStorage;
+    private final LikeDbStorage likeStorage;
 
     @BeforeEach
     public void beforeEach() {
