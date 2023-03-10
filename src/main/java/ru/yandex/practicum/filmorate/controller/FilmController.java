@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateBadRequestException;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.FilmorateSqlException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -55,15 +56,15 @@ public class FilmController {
     }
 
     @PutMapping(value = {"/{id}/like/{userId}", "/{id}/like/", "/like/{userId}"})
-    public Film addLike(@PathVariable("id") Long filmId, @PathVariable("userId") Long userId) {
+    public void addLike(@PathVariable("id") Long filmId, @PathVariable("userId") Long userId) {
         log.info("Запрос на добавление лайка");
-        return filmService.addLike(filmId, userId);
+        filmService.addLike(filmId, userId);
     }
 
     @DeleteMapping(value = {"/{id}/like/{userId}", "/{id}/like/", "/like/{userId}"})
-    public Film deleteLike(@PathVariable("id") Long filmId, @PathVariable("userId") Long userId) {
+    public void deleteLike(@PathVariable("id") Long filmId, @PathVariable("userId") Long userId) {
         log.info("Запрос на удаление лайка");
-        return filmService.deleteLike(filmId, userId);
+        filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping("/{id}")
@@ -112,5 +113,11 @@ public class FilmController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleBadRequestException(MissingPathVariableException e) {
         return "[\"Пропущен обязательный параметр '" + e.getVariableName() + "'\"]";
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleUserSqlException(FilmorateSqlException e) {
+        return "[\"" + e.getMessage() + "\"]";
     }
 }

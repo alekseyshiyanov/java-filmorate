@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateBadRequestException;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.FilmorateSqlException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -101,6 +102,12 @@ public class UserController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleUpdateUserNotFoundException(FilmorateNotFoundException e) {
+        return "[\"" + e.getMessage() + "\"]";
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleUserSqlException(FilmorateSqlException e) {
         return "[\"" + e.getMessage() + "\"]";
     }
 }
