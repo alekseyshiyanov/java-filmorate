@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.mpa.MPA;
+import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql({"/test_schema.sql", "/test_data.sql"})
 class FilmDbStorageTest {
     private final FilmDbStorage filmStorage;
+    private final LikeStorage likeStorage;
 
     @BeforeEach
     public void beforeEach() {
@@ -91,8 +93,8 @@ class FilmDbStorageTest {
     public void addLikeTest() {
         Film tf_0 = filmStorage.getFilm(3L);
 
-        filmStorage.addLike(3L, 2L);
-        filmStorage.addLike(3L, 4L);
+        likeStorage.addLike(3L, 2L);
+        likeStorage.addLike(3L, 4L);
 
         Film tf_1 = filmStorage.getFilm(3L);
 
@@ -105,13 +107,13 @@ class FilmDbStorageTest {
 
     @Test
     public void deleteLikeTest() {
-        filmStorage.addLike(2L, 3L);
-        filmStorage.addLike(2L, 4L);
-        filmStorage.addLike(2L, 5L);
+        likeStorage.addLike(2L, 3L);
+        likeStorage.addLike(2L, 4L);
+        likeStorage.addLike(2L, 5L);
 
         Film tf_0 = filmStorage.getFilm(2L);
 
-        filmStorage.deleteLike(2L,4L);
+        likeStorage.deleteLike(2L,4L);
 
         Film tf_1 = filmStorage.getFilm(2L);
 

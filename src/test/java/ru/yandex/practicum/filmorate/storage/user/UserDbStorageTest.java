@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.friends.FriendsDbStorage;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql({"/test_schema.sql", "/test_data.sql"})
 class UserDbStorageTest {
     private final UserDbStorage userStorage;
+    private final FriendsDbStorage friendsDbStorage;
 
     @Test
     public void createUserStandardBehaviorTest() {
@@ -98,7 +100,7 @@ class UserDbStorageTest {
 
     @Test
     public void addFriendsTest() {
-        userStorage.addFriends(1L, 2L);
+        friendsDbStorage.addFriends(1L, 2L);
 
         User user = userStorage.getUser(1L);
         Set<Long> fl = user.getFriends();
@@ -108,9 +110,9 @@ class UserDbStorageTest {
 
     @Test
     public void deleteFriendsTest() {
-        userStorage.addFriends(1L, 2L);
-        userStorage.addFriends(1L, 3L);
-        userStorage.addFriends(1L, 4L);
+        friendsDbStorage.addFriends(1L, 2L);
+        friendsDbStorage.addFriends(1L, 3L);
+        friendsDbStorage.addFriends(1L, 4L);
 
         User user_0 = userStorage.getUser(1L);
         Set<Long> fl_0 = user_0.getFriends();
@@ -120,7 +122,7 @@ class UserDbStorageTest {
         assertTrue(fl_0.contains(3L));
         assertTrue(fl_0.contains(4L));
 
-        userStorage.deleteFriend(1L, 2L);
+        friendsDbStorage.deleteFriend(1L, 2L);
 
         User user_1 = userStorage.getUser(1L);
         Set<Long> fl_1 = user_1.getFriends();
@@ -133,9 +135,9 @@ class UserDbStorageTest {
 
     @Test
     public void getFriendsListTest() {
-        userStorage.addFriends(1L, 2L);
-        userStorage.addFriends(1L, 3L);
-        userStorage.addFriends(1L, 4L);
+        friendsDbStorage.addFriends(1L, 2L);
+        friendsDbStorage.addFriends(1L, 3L);
+        friendsDbStorage.addFriends(1L, 4L);
 
         List<User> userFL = userStorage.getFriendsList(1L);
         assertEquals(3, userFL.size());
@@ -143,9 +145,9 @@ class UserDbStorageTest {
 
     @Test
     public void getCommonFriendsListTest() {
-        userStorage.addFriends(1L, 3L);
-        userStorage.addFriends(2L, 3L);
-        userStorage.addFriends(1L, 4L);
+        friendsDbStorage.addFriends(1L, 3L);
+        friendsDbStorage.addFriends(2L, 3L);
+        friendsDbStorage.addFriends(1L, 4L);
 
         List<User> userCFL = userStorage.getCommonFriendsList(1L, 2L);
         assertEquals(1, userCFL.size());

@@ -1,5 +1,5 @@
 --заполняем таблицу Genre
-MERGE INTO Genre (ID, Name, Description)
+MERGE INTO Genre (GenreID, Name, Description)
 VALUES
 (1, 'Комедия', ''),
 (2, 'Драма', ''),
@@ -9,7 +9,7 @@ VALUES
 (6, 'Боевик', '');
 
 --заполняем таблицу MpaRating
-MERGE INTO MPA (ID, Name, Description)
+MERGE INTO MPA (MpaId, Name, Description)
 VALUES
 (1, 'G', 'Нет возрастных ограничений'),
 (2, 'PG', 'Детям рекомендуется смотреть фильм с родителями'),
@@ -18,7 +18,7 @@ VALUES
 (5, 'NC-17', 'Лицам до 18 лет просмотр запрещён');
 
 --заполняем таблицу User
-MERGE INTO User (ID, Login, Name, Email, Birthday)
+MERGE INTO User (UserID, Login, Name, Email, Birthday)
 VALUES
 (1, 'user@1975', 'Ivan Ivanov', 'user_Ivan@mail.ru', '1975-09-19'),
 (2, 'petunya@1986', 'Petr Petrov', 'user_Petr@mail.ru', '1986-01-28'),
@@ -28,7 +28,7 @@ VALUES
 (6, 'sidor@1989', 'Sidor Petrov', 'user_ginPetr@mail.ru', '1989-01-28');
 
 --заполняем таблицу Film
-MERGE INTO Film (ID, Name, MPA_Rating, Description, ReleaseDate, Duration, LikesCount)
+MERGE INTO Film (FilmID, Name, MPA_Rating, Description, ReleaseDate, Duration, LikesCount)
 VALUES
 (1, 'Чебурашка', 1, 'Чебурашка!!!', '2023-01-01', 113, 0),
 (2, 'О чём говорят мужчины', 4, 'О чем говорят мужчины? Конечно, о женщинах.', '2010-03-04', 93, 0),
