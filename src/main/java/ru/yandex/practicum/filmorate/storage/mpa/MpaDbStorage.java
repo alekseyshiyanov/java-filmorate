@@ -37,7 +37,7 @@ public class MpaDbStorage implements MpaStorage {
     public MPA getMpa(Long mpaId) {
         try {
             if (mpaId > 0) {
-                return jdbcTemplate.queryForObject("SELECT * FROM MPA WHERE ID = ?;", new MpaRowMapper(), mpaId);
+                return jdbcTemplate.queryForObject("SELECT * FROM MPA WHERE MpaId = ?;", new MpaRowMapper(), mpaId);
             }
             log.info("mpaRatingIndex <= 0");
             return null;
