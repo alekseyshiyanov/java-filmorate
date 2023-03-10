@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exceptions.FilmorateBadRequestException;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +18,10 @@ public class FilmService {
     @Autowired
     @Qualifier("filmDbStorage")
     private FilmStorage filmStorage;
+
+    @Autowired
+    @Qualifier("likeDbStorage")
+    private LikeStorage likeStorage;
 
     public List<Film> getFilmsList() {
         return filmStorage.getFilmsList();
@@ -46,14 +51,14 @@ public class FilmService {
         checkFilmId(filmId);
         checkUserId(userId);
 
-        filmStorage.addLike(filmId, userId);
+        likeStorage.addLike(filmId, userId);
     }
 
     public void deleteLike(Long filmId, Long userId) {
         checkFilmId(filmId);
         checkUserId(userId);
 
-        filmStorage.deleteLike(filmId, userId);
+        likeStorage.deleteLike(filmId, userId);
     }
 
     public List<Film> likedFilmsList (Long count) {
