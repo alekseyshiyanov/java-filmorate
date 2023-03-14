@@ -1,14 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.like;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateSqlException;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 @Slf4j
 @Component("likeDbStorage")
@@ -17,11 +14,11 @@ public class LikeDbStorage implements LikeStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final String ADD_LIKE_QUERY = "INSERT INTO FilmLikes (UserID, FilmID) "
-            + "VALUES (?, ?) ON DUPLICATE KEY UPDATE UserID = UserID, FilmID = FilmID;";
-    private final String DELETE_LIKE_QUERY = "DELETE FROM FilmLikes WHERE (UserID = ?) AND (FilmID = ?);";
-    private final String INC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount+1 WHERE FilmID = ?;";
-    private final String DEC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount-1 WHERE (FilmID = ?) AND (LikesCount > 0);";
+    private final String ADD_LIKE_QUERY = "INSERT INTO FilmLikes (User_ID, Film_ID) "
+            + "VALUES (?, ?) ON DUPLICATE KEY UPDATE User_ID = User_ID, Film_ID = Film_ID;";
+    private final String DELETE_LIKE_QUERY = "DELETE FROM FilmLikes WHERE (User_ID = ?) AND (Film_ID = ?);";
+    private final String INC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount+1 WHERE Film_ID = ?;";
+    private final String DEC_LIKE_COUNTER_QUERY = "UPDATE FILM SET LikesCount=LikesCount-1 WHERE (Film_ID = ?) AND (LikesCount > 0);";
 
     public LikeDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
