@@ -1,14 +1,14 @@
 SET MODE MYSQL;
 
 CREATE TABLE IF NOT EXISTS Genre (
-                                     GenreID     IDENTITY    PRIMARY KEY,
+                                     Genre_ID    IDENTITY    PRIMARY KEY,
                                      Name        varchar     NOT NULL,
                                      Description varchar(200),
                                      CONSTRAINT  unique_Genre_Name UNIQUE(Name)
 );
 
 CREATE TABLE IF NOT EXISTS Film (
-                                    FilmID      IDENTITY    PRIMARY KEY,
+                                    Film_ID     IDENTITY    PRIMARY KEY,
                                     Name        varchar     NOT NULL,
                                     MPA_Rating  int,
                                     Description varchar(200),
@@ -19,13 +19,13 @@ CREATE TABLE IF NOT EXISTS Film (
 );
 
 CREATE TABLE IF NOT EXISTS FilmLikes (
-                                         UserID      int         NOT NULL,
-                                         FilmID      int         NOT NULL,
-                                         CONSTRAINT  pk_FilmLikes PRIMARY KEY(UserID, FilmID)
+                                         User_ID     int         NOT NULL,
+                                         Film_ID     int        NOT NULL,
+                                         CONSTRAINT  pk_FilmLikes PRIMARY KEY(User_ID, Film_ID)
 );
 
 CREATE TABLE IF NOT EXISTS User (
-                                    UserID      IDENTITY    PRIMARY KEY,
+                                    User_ID     IDENTITY    PRIMARY KEY,
                                     Login       varchar     NOT NULL,
                                     Name        varchar(100),
                                     Email       varchar     NOT NULL,
@@ -42,27 +42,28 @@ CREATE TABLE IF NOT EXISTS Friends (
 );
 
 CREATE TABLE IF NOT EXISTS MPA (
-                                   MpaId       IDENTITY    PRIMARY KEY,
+                                   Mpa_Id      IDENTITY    PRIMARY KEY,
                                    Name        varchar     NOT NULL,
                                    Description varchar(200),
                                    CONSTRAINT  unique_MPA_Name UNIQUE(Name)
 );
 
 CREATE TABLE IF NOT EXISTS FilmGenres (
-                                          FilmID      int         NOT NULL,
-                                          GenreID     int         NOT NULL,
-                                          CONSTRAINT  pk_FilmGenres PRIMARY KEY(FilmID, GenreID)
+                                          Film_ID     int         NOT NULL,
+                                          Genre_ID    int         NOT NULL,
+                                          CONSTRAINT  pk_FilmGenres PRIMARY KEY(Film_ID, Genre_ID)
 );
 
-ALTER TABLE Film        ADD CONSTRAINT IF NOT EXISTS fk_MPA_Rating          FOREIGN KEY(MPA_Rating)   REFERENCES MPA (MpaId);
+ALTER TABLE Film        ADD CONSTRAINT IF NOT EXISTS fk_MPA_Rating          FOREIGN KEY(MPA_Rating)   REFERENCES MPA (Mpa_Id);
 ALTER TABLE Film        ADD CONSTRAINT IF NOT EXISTS only_Positive_Duration CHECK (Duration >= 0);
 
-ALTER TABLE FilmGenres  ADD CONSTRAINT IF NOT EXISTS fk_FilmGenres_FilmID   FOREIGN KEY(FilmID)       REFERENCES Film (FilmID);
-ALTER TABLE FilmGenres  ADD CONSTRAINT IF NOT EXISTS fk_FilmGenres_GenreID  FOREIGN KEY(GenreID)      REFERENCES Genre (GenreID);
+ALTER TABLE FilmGenres  ADD CONSTRAINT IF NOT EXISTS fk_FilmGenres_FilmID   FOREIGN KEY(Film_ID)      REFERENCES Film (Film_ID);
+ALTER TABLE FilmGenres  ADD CONSTRAINT IF NOT EXISTS fk_FilmGenres_GenreID  FOREIGN KEY(Genre_ID)     REFERENCES Genre (Genre_ID);
 
-ALTER TABLE FilmLikes   ADD CONSTRAINT IF NOT EXISTS fk_FilmLikes_UserID    FOREIGN KEY(UserID)       REFERENCES User (UserID);
-ALTER TABLE FilmLikes   ADD CONSTRAINT IF NOT EXISTS fk_FilmLikes_FilmID    FOREIGN KEY(FilmID)       REFERENCES Film (FilmID);
+ALTER TABLE FilmLikes   ADD CONSTRAINT IF NOT EXISTS fk_FilmLikes_UserID    FOREIGN KEY(User_ID)      REFERENCES User (User_ID);
+ALTER TABLE FilmLikes   ADD CONSTRAINT IF NOT EXISTS fk_FilmLikes_FilmID    FOREIGN KEY(Film_ID)      REFERENCES Film (Film_ID);
 
-ALTER TABLE Friends     ADD CONSTRAINT IF NOT EXISTS fk_Friends_User_From   FOREIGN KEY(User_From)    REFERENCES User (UserID);
-ALTER TABLE Friends     ADD CONSTRAINT IF NOT EXISTS fk_Friends_User_To     FOREIGN KEY(User_To)      REFERENCES User (UserID);
+ALTER TABLE Friends     ADD CONSTRAINT IF NOT EXISTS fk_Friends_User_From   FOREIGN KEY(User_From)    REFERENCES User (User_ID);
+ALTER TABLE Friends     ADD CONSTRAINT IF NOT EXISTS fk_Friends_User_To     FOREIGN KEY(User_To)      REFERENCES User (User_ID);
+
 
