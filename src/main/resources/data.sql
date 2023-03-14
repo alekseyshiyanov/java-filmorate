@@ -1,5 +1,5 @@
 --заполняем таблицу Genre
-MERGE INTO Genre (GenreID, Name, Description) VALUES
+MERGE INTO Genre (Genre_ID, Name, Description) VALUES
                                              (1, 'Комедия', ''),
                                              (2, 'Драма', ''),
                                              (3, 'Мультфильм', ''),
@@ -8,7 +8,7 @@ MERGE INTO Genre (GenreID, Name, Description) VALUES
                                              (6, 'Боевик', '');
 
 --заполняем таблицу MpaRating
-MERGE INTO MPA (MpaId, Name, Description) VALUES
+MERGE INTO MPA (Mpa_Id, Name, Description) VALUES
                                                  (1, 'G', 'Нет возрастных ограничений'),
                                                  (2, 'PG', 'Детям рекомендуется смотреть фильм с родителями'),
                                                  (3, 'PG-13', 'Детям до 13 лет просмотр не желателен'),
