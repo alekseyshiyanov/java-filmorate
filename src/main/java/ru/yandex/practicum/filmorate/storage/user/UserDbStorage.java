@@ -34,8 +34,8 @@ public class UserDbStorage implements UserStorage {
         try {
             return jdbcTemplate.query("SELECT * FROM USER;", this::getUserDataFromQuery);
         } catch (DataAccessException e) {
-            log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getCause().getMessage());
-            throw new FilmorateSqlException("Ошибка при чтении данных пользователя");
+            log.info("Ошибка при чтении данных списка пользователей. Причина: {}", e.getCause().getMessage());
+            throw new FilmorateSqlException("Ошибка при чтении данных списка пользователей");
         }
     }
 
@@ -109,11 +109,11 @@ public class UserDbStorage implements UserStorage {
         try {
             return jdbcTemplate.query(sqlQuery, this::getUserDataFromQuery, userId);
         } catch (EmptyResultDataAccessException e) {
-            log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getMessage());
+            log.info("Ошибка при чтении данных списка друзей пользователя. Причина: {}", e.getMessage());
             throw new FilmorateNotFoundException("Пользователь с ID = " + userId + " не найден");
         } catch (DataAccessException e) {
-            log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getCause().getMessage());
-            throw new FilmorateSqlException("Ошибка при чтении данных пользователя");
+            log.info("Ошибка при чтении данных списка друзей пользователя. Причина: {}", e.getCause().getMessage());
+            throw new FilmorateSqlException("Ошибка при чтении данных списка друзей пользователя");
         }
     }
 
@@ -129,11 +129,13 @@ public class UserDbStorage implements UserStorage {
         try {
             return jdbcTemplate.query(sqlQuery, this::getUserDataFromQuery, userId, otherId);
         } catch (EmptyResultDataAccessException e) {
-            log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getMessage());
+            log.info("Ошибка при чтении данных списка общих друзей пользователя с userId = {} и пользователя с otherId = {}. Причина: {}",
+                    userId, otherId, e.getMessage());
             throw new FilmorateNotFoundException("Пользователь с ID = " + userId + " не найден");
         } catch (DataAccessException e) {
-            log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getCause().getMessage());
-            throw new FilmorateSqlException("Ошибка при чтении данных пользователя");
+            log.info("Ошибка при чтении данных списка общих друзей пользователя с userId = {} и пользователя с otherId = {}. Причина: {}",
+                    userId, otherId, e.getCause().getMessage());
+            throw new FilmorateSqlException("Ошибка при чтении данных списка общих друзей пользователя");
         }
     }
 
