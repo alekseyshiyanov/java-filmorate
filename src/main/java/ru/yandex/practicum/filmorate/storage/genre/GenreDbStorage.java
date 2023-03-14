@@ -39,11 +39,11 @@ public class GenreDbStorage implements GenreStorage {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM GENRE WHERE GenreID = ?;", new GenreRowMapper(), genreId);
         } catch (EmptyResultDataAccessException e) {
-            log.info("Ошибка при чтении данных жанров. Причина: {}", e.getMessage());
-            throw new FilmorateNotFoundException("Ошибка при обновлении данных жанров");
+            log.info("Ошибка при чтении данных жанра с genreId = {}. Причина: {}", genreId, e.getMessage());
+            throw new FilmorateNotFoundException("Ошибка при чтении данных жанра");
         } catch (DataAccessException e) {
-            log.info("Ошибка при чтении данных жанров. Причина: {}", e.getCause().getMessage());
-            throw new FilmorateSqlException("Ошибка при чтении данных жанров");
+            log.info("Ошибка при чтении данных жанра с genreId = {}. Причина: {}", genreId, e.getCause().getMessage());
+            throw new FilmorateSqlException("Ошибка при чтении данных жанра");
         }
     }
 
@@ -59,7 +59,7 @@ public class GenreDbStorage implements GenreStorage {
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<>();
         } catch (DataAccessException e) {
-            log.info("Ошибка при чтении списка жанров фильма. Причина: {}", e.getCause().getMessage());
+            log.info("Ошибка при чтении списка жанров фильма c filmId = {}. Причина: {}", filmId, e.getCause().getMessage());
             throw new FilmorateSqlException("Ошибка при чтении списка жанров фильма");
         }
     }
