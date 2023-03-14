@@ -50,7 +50,6 @@ public class UserService {
         checkUserId(userId);
 
         friendsStorage.addFriends(userId, friendId);
-//        userStorage.addFriends(userId, friendId);
     }
 
     public void deleteFriends(Long userId, Long friendId) {
@@ -58,7 +57,6 @@ public class UserService {
         checkUserId(userId);
 
         friendsStorage.deleteFriend(userId, friendId);
-//        userStorage.deleteFriend(userId, friendId);
     }
 
     public List<User> getFriendsList(Long userId) {
