@@ -8,21 +8,16 @@
 
 #### Список общих друзей для пользователей с идентификаторами 1 и 2
 ```sql
-SELECT * 
-FROM USER AS u 
-WHERE u.ID IN   ( 
-                    SELECT f_0.USER_TO 
-                    FROM FRIENDS AS f_0 
-                    INNER JOIN FRIENDS AS f_1 ON f_0.USER_TO = f_1.USER_TO 
-                    WHERE (f_0.USER_FROM = 1) AND (f_1.USER_FROM = 2) 
-                );
+SELECT u.*
+FROM USER u, FRIENDS f_0, FRIENDS f_1
+WHERE (f_0.USER_TO = f_1.USER_TO) AND (u.User_ID = f_0.USER_TO)
+    AND (f_0.USER_FROM = 1) AND (f_1.USER_FROM = 2);
 ```
 #### Список друзей для пользователя с идентификатором 1
 ```sql
-SELECT * 
-FROM USER AS u 
-INNER JOIN FRIENDS AS f ON u.ID = f.User_To 
-WHERE f.User_From = 1;
+SELECT u.*
+FROM USER AS u, FRIENDS f
+WHERE (u.User_ID = f.User_To) AND (f.User_From = 1);
 ```
 #### Получение списка фильмов
 ```sql
