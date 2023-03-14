@@ -53,7 +53,7 @@ public class UserDbStorage implements UserStorage {
                     user.getEmail(),
                     user.getBirthday().format(DateTimeFormatter.ISO_DATE));
 
-            return jdbcTemplate.queryForObject("SELECT * FROM USER ORDER BY UserID DESC LIMIT 1;", this::getUserDataFromQuery);
+            return jdbcTemplate.queryForObject("SELECT * FROM USER ORDER BY User_ID DESC LIMIT 1;", this::getUserDataFromQuery);
         } catch (DataAccessException e) {
             log.info("Ошибка при добавлении нового пользователя. Причина: {}", e.getCause().getMessage());
             throw new FilmorateSqlException("Ошибка при добавлении нового пользователя");
@@ -63,7 +63,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User updateUser(User user)
     {
-        String sqlUpdateQuery = "UPDATE USER SET Login = ?, Name = ?, Email = ?, Birthday = ? WHERE UserID = ?;";
+        String sqlUpdateQuery = "UPDATE USER SET Login = ?, Name = ?, Email = ?, Birthday = ? WHERE User_ID = ?;";
         try {
             Long userId = user.getId();
 
@@ -78,7 +78,7 @@ public class UserDbStorage implements UserStorage {
                 throw new FilmorateNotFoundException("Ошибка при обновлении данных пользователя. Пользователь с ID = " + userId + " не существует");
             }
 
-            return jdbcTemplate.queryForObject("SELECT * FROM USER WHERE UserID = ?;", this::getUserDataFromQuery, userId);
+            return jdbcTemplate.queryForObject("SELECT * FROM USER WHERE User_ID = ?;", this::getUserDataFromQuery, userId);
         } catch (DataAccessException e) {
             log.info("Ошибка при обновлении данных пользователя. Причина: {}", e.getCause().getMessage());
             throw new FilmorateSqlException("Ошибка при обновлении данных пользователя");
@@ -89,7 +89,7 @@ public class UserDbStorage implements UserStorage {
     public User getUser(Long userId)
     {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM USER WHERE UserID = ?;", this::getUserDataFromQuery, userId);
+            return jdbcTemplate.queryForObject("SELECT * FROM USER WHERE User_ID = ?;", this::getUserDataFromQuery, userId);
         } catch (EmptyResultDataAccessException e) {
             log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getMessage());
             throw new FilmorateNotFoundException("Пользователь с ID = " + userId + " не найден");
@@ -104,7 +104,7 @@ public class UserDbStorage implements UserStorage {
     {
         String sqlQuery =   "SELECT u.* " +
                             "FROM USER AS u, FRIENDS f " +
-                            "WHERE (u.UserID = f.User_To) " +
+                            "WHERE (u.User_ID = f.User_To) " +
                             "AND (f.User_From = ?);";
         try {
             return jdbcTemplate.query(sqlQuery, this::getUserDataFromQuery, userId);
@@ -123,7 +123,7 @@ public class UserDbStorage implements UserStorage {
         String sqlQuery =     "SELECT u.* "
                             + "FROM USER u, FRIENDS f_0, FRIENDS f_1 "
                             + "WHERE (f_0.USER_TO = f_1.USER_TO) "
-                            + "AND (u.USERID = f_0.USER_TO) "
+                            + "AND (u.User_ID = f_0.USER_TO) "
                             + "AND (f_0.USER_FROM = ?) "
                             + "AND (f_1.USER_FROM = ?);";
         try {
@@ -140,7 +140,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User getUserDataFromQuery(ResultSet rs, int rowNum) throws SQLException {
-        Long userId = rs.getLong("UserID");
+        Long userId = rs.getLong("User_ID");
         Set<Long> friendsIdList = getFriendsIdList(userId);
 
         return User.builder()
