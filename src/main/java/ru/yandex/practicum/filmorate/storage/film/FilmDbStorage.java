@@ -187,7 +187,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Set<Long> getLikesListByFilmId(Long filmId) {
-        String query = "SELECT UserID "
+        String query = "SELECT User_ID "
                 + "FROM FilmLikes "
                 + "WHERE Film_ID = ?"
                 + ";";
@@ -199,6 +199,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Long likesListFromQuery(ResultSet rs, int rowNum) throws SQLException {
-        return rs.getLong("UserID");
+        return rs.getLong("User_ID");
     }
 }
