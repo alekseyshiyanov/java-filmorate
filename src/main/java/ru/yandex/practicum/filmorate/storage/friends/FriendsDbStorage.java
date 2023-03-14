@@ -28,8 +28,8 @@ public class FriendsDbStorage implements FriendsStorage {
             int result = jdbcTemplate.update(sqlQueryUpdate, 1, friendId, userId);
             jdbcTemplate.update(sqlQueryInsert, userId, friendId, result);
         } catch (DataAccessException e) {
-            log.info("Ошибка добавления друга friendId = {} для userID = {}. Причина: {}", friendId, userId, e.getCause().getMessage());
-            throw new FilmorateSqlException("Ошибка добавления друга");
+            log.info("Ошибка добавления пользователя friendId = {} в друзья пользователя userID = {}. Причина: {}", friendId, userId, e.getCause().getMessage());
+            throw new FilmorateSqlException("Ошибка добавления пользователя в друзья");
         }
     }
 
@@ -44,8 +44,8 @@ public class FriendsDbStorage implements FriendsStorage {
             jdbcTemplate.update(sqlQueryDelete, userId, friendId);
 
         } catch (DataAccessException e) {
-            log.info("Ошибка при чтении данных пользователя. Причина: {}", e.getCause().getMessage());
-            throw new FilmorateSqlException("Ошибка при чтении данных пользователя");
+            log.info("Ошибка при удалении пользователя friendId = {} из друзей пользователя userID = {}. Причина: {}", friendId, userId, e.getCause().getMessage());
+            throw new FilmorateSqlException("Ошибка при удалении пользователя из друзей");
         }
     }
 }
