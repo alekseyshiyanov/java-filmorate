@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@Component("inMemoryUserStorage")
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
 
@@ -65,32 +65,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User getUser(Long userId) {
         return users.get(userId);
-    }
-
-    @Override
-    public void addFriends(Long userId, Long friendId) {
-        User user_1 = checkUser(userId);
-        User user_2 = checkUser(friendId);
-
-        user_1.getFriends().add(friendId);
-        user_2.getFriends().add(userId);
-    }
-
-    @Override
-    public void deleteFriend(Long userId, Long friendId) {
-        User user_1 = checkUser(userId);
-        User user_2 = checkUser(friendId);
-
-        if (!user_1.getFriends().contains(friendId)) {
-            throw new FilmorateNotFoundException("Пользователь с ID = " + userId + " не связан пользователем с ID = " + friendId);
-        }
-
-        if (!user_2.getFriends().contains(userId)) {
-            throw new FilmorateNotFoundException("Пользователь с ID = " + friendId + " не связан пользователем с ID = " + userId);
-        }
-
-        user_1.getFriends().remove(friendId);
-        user_2.getFriends().remove(userId);
     }
 
     @Override

@@ -6,11 +6,10 @@ import ru.yandex.practicum.filmorate.exceptions.FilmorateBadRequestException;
 import ru.yandex.practicum.filmorate.exceptions.FilmorateNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
+@Component("inMemoryFilmStorage")
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
 
@@ -40,8 +39,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        checkReleaseDate(film);
-
         Long uid = film.getId();
 
         if (uid == null) {
@@ -76,34 +73,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film addLike(Long filmId, Long userId) {
-        Film film = films.get(filmId);
-
-        if (film == null) {
-            throw new FilmorateNotFoundException("Ошибка добавления лайка. Фильм с ID = " + filmId + " не существует");
-        }
-
-        film.getLikesList().add(userId);
-        return film;
-    }
-
-    @Override
-    public Film deleteLike(Long filmId, Long userId) {
-        Film film = films.get(filmId);
-
-        if (film == null) {
-            throw new FilmorateNotFoundException("Ошибка удаления лайка. Фильм с ID = " + filmId + " не существует");
-        }
-
-        if (!film.getLikesList().contains(userId)) {
-            throw new FilmorateNotFoundException("Ошибка удаления лайка. Фильм с ID = " + filmId + " не содержит лайка от пользователя с id = " + userId);
-        }
-
-        film.getLikesList().remove(userId);
-        return film;
-    }
-
-    @Override
     public List<Film> likedFilmsList(Long count) {
         return  films.values().stream()
                 .sorted(Comparator.comparingInt(film -> (-1 * film.getLikesList().size())))
@@ -116,23 +85,8 @@ public class InMemoryFilmStorage implements FilmStorage {
             film.setLikesList(new HashSet<>());
         }
 
-        checkReleaseDate(film);
         film.setId(getFilmUID());
         films.put(film.getId(), film);
         log.info("Сохранен объект: {}", film);
-    }
-
-    private void checkReleaseDate(Film film) {
-        LocalDate releaseDate = film.getReleaseDate();
-
-        if (releaseDate == null) {
-            log.info("Объект: {} не может быть сохранен. Причина 'Дата релиза не может быть null'", film);
-            throw new FilmorateBadRequestException("Дата релиза не может быть null");
-        }
-
-        if(releaseDate.isBefore(LocalDate.of(1895, 12, 28))) {
-            log.info("Объект: {} не может быть сохранен. Причина 'Дата релиза не может быть ранее 1895-12-28'", film);
-            throw new FilmorateBadRequestException("Дата релиза не может быть ранее 1895-12-28");
-        }
     }
 }
